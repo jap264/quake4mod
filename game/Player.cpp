@@ -1543,6 +1543,10 @@ void idPlayer::Init( void ) {
 	talkingNPC				= NULL;
  	talkCursor				= 0;
 
+	wounded = 0;
+	wound = NULL;
+	woundCooldown = 100;
+
 	lightningEffects		= 0;
 	lightningNextTime		= 0;
 
@@ -2055,6 +2059,7 @@ void idPlayer::Spawn( void ) {
 //RITUAL END
 
 	itemCosts = static_cast< const idDeclEntityDef * >( declManager->FindType( DECL_ENTITYDEF, "ItemCostConstants", false ) );
+	
 }
 
 /*
@@ -9041,7 +9046,7 @@ void idPlayer::Move( void ) {
 		pfl.onLadder	= false;
 		pfl.jump		= false;
 	} else {
-		pfl.crouch	= physicsObj.IsCrouching();
+		pfl.crouch		= physicsObj.IsCrouching();
 		pfl.onGround	= physicsObj.HasGroundContacts();
 		pfl.onLadder	= physicsObj.OnLadder();
 		pfl.jump		= physicsObj.HasJumped();
@@ -9643,6 +9648,16 @@ void idPlayer::Think( void ) {
 		inBuyZone = false;
 
 	inBuyZonePrev = false;
+
+	if (woundCoolDown)
+		woundCoolDown--;
+
+	if ((wounded) && (!woundCoolDown)){
+		idVec3 dir;
+		wounded--;
+		woundCoolDown = 100;
+		Damage(wound, wound, dir, "damage_blaster", 1, 0);
+	}
 }
 
 /*
@@ -10264,6 +10279,9 @@ void idPlayer::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &di
 
 		int oldHealth = health;
 		health -= damage;
+
+		wounded = 5;
+		wound = attacker;
 
 		GAMELOG_ADD ( va("player%d_damage_taken", entityNumber ), damage );
 		GAMELOG_ADD ( va("player%d_damage_%s", entityNumber, damageDefName), damage );

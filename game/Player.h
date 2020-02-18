@@ -1154,6 +1154,10 @@ private:
 	stateResult_t			State_Legs_Land					( const stateParms_t& parms );
 	stateResult_t			State_Legs_Dead					( const stateParms_t& parms );
 	
+	float wounded;
+	idEntity *wound;
+	int woundCooldown;
+
  	CLASS_STATES_PROTOTYPE( idPlayer );
 };
 
