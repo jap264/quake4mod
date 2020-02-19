@@ -601,8 +601,13 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 			return true;
 		}
 		return false;
-	} 
-
+	}
+	
+	if (spawnArgs.GetBool( "clips" )){
+		gameLocal.Printf("got here1");
+		player->GivePowerUp(POWERUP_QUADDAMAGE, SEC2MS(30.0f));
+	}
+	gameLocal.Printf("got here");
 	return player->GiveItem( this );
 }
 

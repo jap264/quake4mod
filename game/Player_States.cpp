@@ -807,9 +807,11 @@ stateResult_t idPlayer::State_Legs_Jump ( const stateParms_t& parms ) {
 				PostAnimState ( ANIMCHANNEL_LEGS, "Legs_Land", 4 );
 				return SRESULT_DONE;
 			}
-			else if (pfl.jump && !pfl.onGround && jumpCount < 2){
-				PostAnimState(ANIMCHANNEL_LEGS, "Legs_Jump", 4);
-				return SRESULT_DONE;
+			else if (!pfl.onGround){
+				if (pfl.jump && jumpCount < 2){
+					PostAnimState(ANIMCHANNEL_LEGS, "Legs_Jump", 4);
+					return SRESULT_DONE;
+				}
 			}
 			if ( AnimDone ( ANIMCHANNEL_LEGS, 4 ) ) {
 				PostAnimState ( ANIMCHANNEL_LEGS, "Legs_Fall", 4 );
@@ -842,6 +844,12 @@ stateResult_t idPlayer::State_Legs_Fall ( const stateParms_t& parms ) {
 			if ( pfl.onGround ) {
 				PostAnimState ( ANIMCHANNEL_LEGS, "Legs_Land", 2 );
 				return SRESULT_DONE;
+			}
+			else if (!pfl.onGround){
+				if (pfl.jump && jumpCount < 2){
+					PostAnimState(ANIMCHANNEL_LEGS, "Legs_Jump", 4);
+					return SRESULT_DONE;
+				}
 			}
 			return SRESULT_WAIT;
 	}

@@ -9649,7 +9649,7 @@ void idPlayer::Think( void ) {
 
 	inBuyZonePrev = false;
 
-	if (woundCoolDown)
+	/*if (woundCoolDown)
 		woundCoolDown--;
 
 	if ((wounded) && (!woundCoolDown)){
@@ -9657,7 +9657,7 @@ void idPlayer::Think( void ) {
 		wounded--;
 		woundCoolDown = 100;
 		Damage(wound, wound, dir, "damage_blaster", 1, 0);
-	}
+	}*/
 }
 
 /*
