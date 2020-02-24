@@ -603,11 +603,12 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 		return false;
 	}
 	
-	if (spawnArgs.GetBool( "clips" )){
+	if (spawnArgs.GetString( "clips" )){
 		gameLocal.Printf("got here1");
 		player->GivePowerUp(POWERUP_QUADDAMAGE, SEC2MS(30.0f));
 	}
-	gameLocal.Printf("got here");
+	const char *ammoName = player->weapon->GetAmmoNameForIndex(player->weapon->GetAmmoType());
+	gameLocal.Printf(ammoName);
 	return player->GiveItem( this );
 }
 
