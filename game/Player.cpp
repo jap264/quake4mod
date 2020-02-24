@@ -9570,6 +9570,18 @@ void idPlayer::Think( void ) {
 
 	UpdatePowerUps();
 
+	if (!PowerUpActive(POWERUP_QUADDAMAGE)){
+		StopPowerUpEffect(POWERUP_QUADDAMAGE);
+		ClearPowerup(POWERUP_QUADDAMAGE);
+	}
+	if (!PowerUpActive(POWERUP_REGENERATION)){
+		StopPowerUpEffect(POWERUP_REGENERATION);
+		ClearPowerup(POWERUP_REGENERATION);
+	}
+	if (!PowerUpActive(POWERUP_HASTE)){
+		StopPowerUpEffect(POWERUP_HASTE);
+		ClearPowerup(POWERUP_HASTE);
+	}
 	UpdateDeathSkin( false );
 
 	UpdateDeathShader( deathStateHitch );
@@ -9648,15 +9660,17 @@ void idPlayer::Think( void ) {
 		inBuyZone = false;
 
 	inBuyZonePrev = false;
+	/*
+	int woundCoolDown = NULL;
 
-	/*if (woundCoolDown)
+	if (woundCoolDown)
 		woundCoolDown--;
 
 	if ((wounded) && (!woundCoolDown)){
 		idVec3 dir;
 		wounded--;
-		woundCoolDown = 100;
-		Damage(wound, wound, dir, "damage_blaster", 1, 0);
+		woundCoolDown = 10;
+		Damage(wound, wound, dir, "damage_wound", 1, 0);
 	}*/
 }
 

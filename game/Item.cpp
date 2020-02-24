@@ -614,7 +614,7 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 	if (idStr::Icmpn(name, "moveable_item", 13) == 0){
 		player->GivePowerUp(POWERUP_HASTE, SEC2MS(10.0f));
 	}
-	
+
 	/*else if (idStr::Icmpn(name, "small armor") == 0 || idStr::Icmp(name, "large armor") == 0){
 		player->GivePowerUp(POWERUP_INVISIBILITY, SEC2MS(20.0f));
 	}*/
