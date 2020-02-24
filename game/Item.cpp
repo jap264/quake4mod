@@ -603,12 +603,22 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 		return false;
 	}
 	
-	if (spawnArgs.GetString( "clips" )){
-		gameLocal.Printf("got here1");
-		player->GivePowerUp(POWERUP_QUADDAMAGE, SEC2MS(30.0f));
+	if (idStr::Icmpn(name, "ammo", 4) == 0){
+		player->GivePowerUp(POWERUP_QUADDAMAGE, SEC2MS(10.0f));
 	}
-	const char *ammoName = player->weapon->GetAmmoNameForIndex(player->weapon->GetAmmoType());
-	gameLocal.Printf(ammoName);
+
+	if (idStr::Icmpn(name, "item_health", 11) == 0){
+		player->GivePowerUp(POWERUP_REGENERATION, SEC2MS(20.0f));
+	}
+	
+	if (idStr::Icmpn(name, "moveable_item", 13) == 0){
+		player->GivePowerUp(POWERUP_INVISIBILITY, SEC2MS(10.0f));
+	}
+	
+	/*else if (idStr::Icmpn(name, "small armor") == 0 || idStr::Icmp(name, "large armor") == 0){
+		player->GivePowerUp(POWERUP_INVISIBILITY, SEC2MS(20.0f));
+	}*/
+	gameLocal.Printf("["+name+"]");
 	return player->GiveItem( this );
 }
 
