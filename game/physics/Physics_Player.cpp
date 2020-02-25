@@ -44,6 +44,7 @@ const int PMF_TIME_WATERJUMP	= 128;		// movementTime is waterjump
 const int PMF_ALL_TIMES			= (PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK);
 
 int c_pmove = 0;
+int jumpcount = 0;
 
 float idPhysics_Player::Pm_Accelerate( void ) {
 	return gameLocal.IsMultiplayer() ? PM_ACCELERATE_MP : PM_ACCELERATE_SP;
@@ -648,6 +649,15 @@ void idPhysics_Player::AirMove( void ) {
 	}
 // RAVEN END
 
+	if (idPhysics_Player::CheckJump()){
+		if (waterLevel > WATERLEVEL_FEET){
+			idPhysics_Player::WaterMove();
+		}
+		else
+			idPhysics_Player::AirMove();
+
+		return;
+	}
 	idPhysics_Player::Friction();
 
 	scale = idPhysics_Player::CmdScale( command );
@@ -1060,6 +1070,7 @@ void idPhysics_Player::CheckGround( bool checkStuck ) {
 		return;
 	}
 
+	jumpcount = 0;
 	groundMaterial = groundTrace.c.material;
 	groundEntityPtr = gameLocal.entities[ groundTrace.c.entityNum ];
 
@@ -1292,10 +1303,19 @@ bool idPhysics_Player::CheckJump( void ) {
 	groundPlane = false;		// jumping away
 	walking = false;
 	current.movementFlags |= PMF_JUMP_HELD | PMF_JUMPED;
-
+	
 	addVelocity = 2.0f * maxJumpHeight * -gravityVector;
 	addVelocity *= idMath::Sqrt( addVelocity.Normalize() );
-	current.velocity += addVelocity;
+	//current.velocity += addVelocity;
+	
+	if (jumpcount < 2){
+		jumpcount++;
+		gameLocal.Printf("JumpCount %d", jumpcount);
+		if (current.velocity.z < 0.0f)
+			current.velocity = addVelocity * 1.4f;
+		else
+			current.velocity += addVelocity;
+	}
 
 // RAVEN BEGIN
 // bdube: crouch slide, nick maggoire is awesome
