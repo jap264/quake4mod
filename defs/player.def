@@ -800,9 +800,9 @@ entityDef player_marine
 
 	// these used to be hard coded values from id
 	// doom 3 SP values, fatal 65, hard 45, soft 30, no fall 7
-	"fatal_fall_delta"					"65"
-	"hard_fall_delta"					"45"
-	"soft_fall_delta"					"30"
+	"fatal_fall_delta"					"100"
+	"hard_fall_delta"					"100"
+	"soft_fall_delta"					"100"
 	"no_fall_delta"						"7" 
 	
 	"def_playerView"					"playerView_marine"
@@ -1476,7 +1476,19 @@ entityDef player_animatedentity {
 entityDef damage_wound
 {
 	"inherit"					"damage_bullet"
-	"damage"					"1"
+	"damage"					".1"
+
+	"fx_wound"					"effects/wounds/energy.fx"
+
+	"deathPush"					"100"
+	"deathPushMin"				"2000 250"
+	"deathPushMax"				"5000 500"
+}
+
+entityDef damage_blood
+{
+	"inherit"					"damage_bullet"
+	"damage"					"5"
 
 	"fx_wound"					"effects/wounds/energy.fx"
 

@@ -1543,9 +1543,13 @@ void idPlayer::Init( void ) {
 	talkingNPC				= NULL;
  	talkCursor				= 0;
 
+	//yerrr
 	wounded = 0;
 	wound = NULL;
 	woundCooldown = 100;
+	bleeding = 0;
+	blood = NULL;
+	bloodCooldown = 500;
 
 	lightningEffects		= 0;
 	lightningNextTime		= 0;
@@ -9079,6 +9083,8 @@ void idPlayer::Move( void ) {
 		acc->time = gameLocal.time;
 		acc->dir[2] = 200;
 		acc->dir[0] = acc->dir[1] = 0;
+		//yerrr
+		Damage(blood, blood, idVec3(0, 0, 0), "damage_blood", 1, 0);
 	}
 
 	if ( pfl.onLadder ) {
@@ -9149,6 +9155,12 @@ void idPlayer::UpdateIntentDir ( void ) {
 			moveDir.z = 0;
 			newIntentDir = moveDir;
 			prevBias = 39.0f;
+		}
+		//yerrr
+		bloodCooldown--;
+		if (bloodCooldown == 0){
+			Damage(wound, wound, idVec3(0, 0, 0), "damage_blood", 1, 0);
+			bloodCooldown = 500;
 		}
 	}
 	BiasIntentDir( newIntentDir, prevBias );
@@ -9655,6 +9667,8 @@ void idPlayer::Think( void ) {
 	//yerrr
 	const idVec3 & masterOrigin = GetPhysics()->GetOrigin();
 	gameLocal.Printf("Origin %f,%f,%f", masterOrigin[0], masterOrigin[1], masterOrigin[2]);
+
+	//if (GetPhysics()->CheckJump())
 
 	/*yerrr
 	int woundCoolDown = NULL;
@@ -10290,8 +10304,11 @@ void idPlayer::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &di
 		int oldHealth = health;
 		health -= damage;
 
+		//yerrr
 		wounded = 5;
 		wound = attacker;
+		bleeding = 1;
+		blood = attacker;
 
 		GAMELOG_ADD ( va("player%d_damage_taken", entityNumber ), damage );
 		GAMELOG_ADD ( va("player%d_damage_%s", entityNumber, damageDefName), damage );
@@ -12209,9 +12226,7 @@ bool idPlayer::GetMasterPosition( idVec3 &masterOrigin, idMat3 &masterAxis ) con
 	if( !IsInVehicle() ) {
 		return idActor::GetMasterPosition( masterOrigin, masterAxis );
 	}
-	//yerrr
-	gameLocal.Printf("Master Origin: %s",masterOrigin);
-	gameLocal.Printf("Master Axis: %s", masterAxis);
+
 	vehicleController.GetDriverPosition( masterOrigin, masterAxis );
 	return true;
 }
