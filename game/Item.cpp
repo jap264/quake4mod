@@ -602,7 +602,7 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 		}
 		return false;
 	}
-	
+	//yerrr
 	if (idStr::Icmpn(name, "ammo", 4) == 0){
 		player->GivePowerUp(POWERUP_QUADDAMAGE, SEC2MS(10.0f));
 	}

@@ -6585,6 +6585,9 @@ bool idPlayer::Collide( const trace_t &collision, const idVec3 &velocity ) {
 			}
 		}
 	}
+	
+	Damage(wound, wound, idVec3(0,0,0), "damage_wound", 1, 0);
+
 	return false;
 }
 
@@ -9570,18 +9573,6 @@ void idPlayer::Think( void ) {
 
 	UpdatePowerUps();
 
-	if (!PowerUpActive(POWERUP_QUADDAMAGE)){
-		StopPowerUpEffect(POWERUP_QUADDAMAGE);
-		ClearPowerup(POWERUP_QUADDAMAGE);
-	}
-	if (!PowerUpActive(POWERUP_REGENERATION)){
-		StopPowerUpEffect(POWERUP_REGENERATION);
-		ClearPowerup(POWERUP_REGENERATION);
-	}
-	if (!PowerUpActive(POWERUP_HASTE)){
-		StopPowerUpEffect(POWERUP_HASTE);
-		ClearPowerup(POWERUP_HASTE);
-	}
 	UpdateDeathSkin( false );
 
 	UpdateDeathShader( deathStateHitch );
@@ -9660,7 +9651,12 @@ void idPlayer::Think( void ) {
 		inBuyZone = false;
 
 	inBuyZonePrev = false;
-	/*
+
+	//yerrr
+	const idVec3 & masterOrigin = GetPhysics()->GetOrigin();
+	gameLocal.Printf("Origin %f,%f,%f", masterOrigin[0], masterOrigin[1], masterOrigin[2]);
+
+	/*yerrr
 	int woundCoolDown = NULL;
 
 	if (woundCoolDown)
@@ -10222,7 +10218,7 @@ void idPlayer::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &di
 	ClientDamageEffects ( damageDef->dict, dir, damage );
 
  	// inform the attacker that they hit someone
- 	attacker->DamageFeedback( this, inflictor, damage );
+ 	//attacker->DamageFeedback( this, inflictor, damage );
 	
 //RAVEN BEGIN
 //asalmon: Xenon needs stats in singleplayer
@@ -12211,9 +12207,11 @@ idPlayer::GetMasterPosition
 */
 bool idPlayer::GetMasterPosition( idVec3 &masterOrigin, idMat3 &masterAxis ) const {
 	if( !IsInVehicle() ) {
-		return idActor::GetMasterPosition( masterOrigin, masterAxis );	
+		return idActor::GetMasterPosition( masterOrigin, masterAxis );
 	}
-	
+	//yerrr
+	gameLocal.Printf("Master Origin: %s",masterOrigin);
+	gameLocal.Printf("Master Axis: %s", masterAxis);
 	vehicleController.GetDriverPosition( masterOrigin, masterAxis );
 	return true;
 }
@@ -14108,5 +14106,10 @@ int idPlayer::CanSelectWeapon(const char* weaponName)
 
 	return weaponNum;
 }
+//yerrr
+void idPlayer::SpawnGhost(){
+	char* test = "spawn Monster_Berserker";
 
+	const idCmdArgs name(test, true);
+}
 // RITUAL END

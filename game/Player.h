@@ -279,7 +279,8 @@ public:
 		EVENT_EMOTE,
  		EVENT_MAXEVENTS
  	};
-
+	//yerrr
+	void					SpawnGhost(void);
 	friend class idThread;
 
 	usercmd_t				usercmd;
@@ -1156,7 +1157,7 @@ private:
 	
 	float wounded;
 	idEntity *wound;
-	int woundCooldown;
+	int woundCooldown = NULL;
 
  	CLASS_STATES_PROTOTYPE( idPlayer );
 };
