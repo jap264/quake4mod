@@ -1158,8 +1158,8 @@ private:
 	//yerrr
 	float wounded, bleeding;
 	idEntity *wound, *blood;
-	int woundCooldown = NULL, bloodCooldown = NULL;
-
+	int woundCooldown = NULL, bloodCooldown = NULL, deathCount, ghostCount;
+	//yerrr end
  	CLASS_STATES_PROTOTYPE( idPlayer );
 };
 

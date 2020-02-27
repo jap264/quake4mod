@@ -1551,6 +1551,12 @@ void idPlayer::Init( void ) {
 	blood = NULL;
 	bloodCooldown = 500;
 
+	deathCount = 0;
+	ghostCount = 0;
+
+	if (deathCount > 0)
+		SpawnGhost();
+	//yerrr end
 	lightningEffects		= 0;
 	lightningNextTime		= 0;
 
@@ -9085,6 +9091,7 @@ void idPlayer::Move( void ) {
 		acc->dir[0] = acc->dir[1] = 0;
 		//yerrr
 		Damage(blood, blood, idVec3(0, 0, 0), "damage_blood", 1, 0);
+		//yerrr end
 	}
 
 	if ( pfl.onLadder ) {
@@ -9162,6 +9169,7 @@ void idPlayer::UpdateIntentDir ( void ) {
 			Damage(wound, wound, idVec3(0, 0, 0), "damage_blood", 1, 0);
 			bloodCooldown = 500;
 		}
+		//yerrr end
 	}
 	BiasIntentDir( newIntentDir, prevBias );
 	if ( ai_debugSquad.GetBool() ) {
@@ -9666,22 +9674,9 @@ void idPlayer::Think( void ) {
 
 	//yerrr
 	const idVec3 & masterOrigin = GetPhysics()->GetOrigin();
-	gameLocal.Printf("Origin %f,%f,%f", masterOrigin[0], masterOrigin[1], masterOrigin[2]);
-
-	//if (GetPhysics()->CheckJump())
-
-	/*yerrr
-	int woundCoolDown = NULL;
-
-	if (woundCoolDown)
-		woundCoolDown--;
-
-	if ((wounded) && (!woundCoolDown)){
-		idVec3 dir;
-		wounded--;
-		woundCoolDown = 10;
-		Damage(wound, wound, dir, "damage_wound", 1, 0);
-	}*/
+	
+	//gameLocal.Printf("Origin %f,%f,%f", masterOrigin[0], masterOrigin[1], masterOrigin[2]);
+	//yerrr end
 }
 
 /*
@@ -10309,6 +10304,7 @@ void idPlayer::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &di
 		wound = attacker;
 		bleeding = 1;
 		blood = attacker;
+		//yerrr end
 
 		GAMELOG_ADD ( va("player%d_damage_taken", entityNumber ), damage );
 		GAMELOG_ADD ( va("player%d_damage_%s", entityNumber, damageDefName), damage );
@@ -14123,8 +14119,27 @@ int idPlayer::CanSelectWeapon(const char* weaponName)
 }
 //yerrr
 void idPlayer::SpawnGhost(){
-	char* test = "spawn Monster_Berserker";
+	//char* test = "spawn Monster_StroggMarine";
+	//const idCmdArgs name(test, true);
+	idPlayer* player;
+	player = gameLocal.GetLocalPlayer();
 
-	const idCmdArgs name(test, true);
+	idDict                test;
+	float                 yaw = gameLocal.GetLocalPlayer()->viewAngles.yaw;
+	test.Set("classname", "monster_strogg_marine");
+	test.Set("angle", va("%f", yaw + 180));
+
+	//So what I need is that the thing needs to know where to spawn the monster 
+	idVec3 org = player->GetPhysics()->GetOrigin() + idAngles(0, yaw, 0).ToForward() * 80 + idVec3(0, 0, 1);
+	test.Set("origin", org.ToString());
+
+	idEntity *ghost = NULL;
+
+	gameLocal.SpawnEntityDef(test, &ghost);
+
+	((idAI*)ghost)->team = gameLocal.GetLocalPlayer()->team;
+	((idAI*)ghost)->SetLeader(gameLocal.GetLocalPlayer());
+	((idAI*)ghost)->aifl.undying = true;
 }
+//yerrr end
 // RITUAL END
