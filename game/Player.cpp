@@ -1553,6 +1553,7 @@ void idPlayer::Init( void ) {
 
 	deathCount = 0;
 	ghostCount = 0;
+	ghostCooldown = 0;
 
 	if (deathCount > 0)
 		SpawnGhost();
@@ -9675,11 +9676,36 @@ void idPlayer::Think( void ) {
 
 	//yerrr
 	const idVec3 & masterOrigin = GetPhysics()->GetOrigin(); //get player's origin
+	ghostCooldown++;
+	ghostCooldown2++;
+
+	if (ghostCooldown == 10000){
+		if (deathCount % 2 == 0) //saves first run's origin and every other run
+			ghostOrigin1.Append(masterOrigin);
+
+		else //saves second run's origin and every other run
+			ghostOrigin2.Append(masterOrigin);
+
+		ghostCooldown = 0; //reset cooldown
+	}
+
 	
-	if (deathCount % 2 == 0) //saves first run's origin and every other run
-		ghostOrigin1.Append(masterOrigin);
-	else //saves second run's origin and every other run
-		ghostOrigin2.Append(masterOrigin);
+	if (deathCount > 0){
+		
+		ghostCount = 1;
+
+		if (ghostCooldown2 == 10000){
+
+			if (deathCount % 2 == 1)
+				((idAI*)ghost)->SetOrigin(ghostOrigin1.operator[](ghostCount));
+		
+			else
+				((idAI*)ghost)->SetOrigin(ghostOrigin2.operator[](ghostCount));
+			
+			ghostCount++;
+			ghostCooldown2 = 0;
+		}
+	}
 	
 	//gameLocal.Printf("Origin %f,%f,%f", masterOrigin[0], masterOrigin[1], masterOrigin[2]);
 	//yerrr end
@@ -9777,6 +9803,8 @@ void idPlayer::Killed( idEntity *inflictor, idEntity *attacker, int damage, cons
 			ghostOrigin1.Clear();
 		else //erase contents of second run upon death, and every other after
 			ghostOrigin2.Clear();
+
+		idEntity *ghost = NULL; //clears old ghost
 	}
 
 	deathCount++; //has to be after the if statement above
@@ -14138,8 +14166,9 @@ int idPlayer::CanSelectWeapon(const char* weaponName)
 void idPlayer::SpawnGhost(){
 	//char* test = "spawn Monster_StroggMarine";
 	//const idCmdArgs name(test, true);
-	idPlayer* player;
-	player = gameLocal.GetLocalPlayer();
+
+	//idPlayer* player;
+	//player = gameLocal.GetLocalPlayer();
 
 	idDict                test;
 	float                 yaw = gameLocal.GetLocalPlayer()->viewAngles.yaw;
@@ -14147,10 +14176,15 @@ void idPlayer::SpawnGhost(){
 	test.Set("angle", va("%f", yaw + 180));
 
 	//So what I need is that the thing needs to know where to spawn the monster 
-	idVec3 org = player->GetPhysics()->GetOrigin() + idAngles(0, yaw, 0).ToForward() * 80 + idVec3(0, 0, 1);
+	idVec3 org;
+	if (deathCount % 2 == 1) //second run (even numbered runs)
+		org = ghostOrigin1.operator[](0);
+	else //third run (even numbered runs)
+		org = ghostOrigin2.operator[](0);
+
 	test.Set("origin", org.ToString());
 
-	idEntity *ghost = NULL;
+	//idEntity *ghost = NULL;
 
 	gameLocal.SpawnEntityDef(test, &ghost);
 

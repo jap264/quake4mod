@@ -1160,8 +1160,9 @@ private:
 	//yerrr
 	float wounded, bleeding;
 	idEntity *wound, *blood;
-	int woundCooldown = NULL, bloodCooldown = NULL, deathCount, ghostCount;
+	int woundCooldown = NULL, bloodCooldown = NULL, ghostCooldown = NULL, ghostCooldown2 = NULL, deathCount, ghostCount;
 
+	idEntity *ghost = NULL;
 	idList<idVec3> ghostOrigin1, ghostOrigin2;
 	//yerrr end
  	CLASS_STATES_PROTOTYPE( idPlayer );
