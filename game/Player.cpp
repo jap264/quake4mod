@@ -1557,6 +1557,7 @@ void idPlayer::Init( void ) {
 	if (deathCount > 0)
 		SpawnGhost();
 	//yerrr end
+
 	lightningEffects		= 0;
 	lightningNextTime		= 0;
 
@@ -9673,7 +9674,12 @@ void idPlayer::Think( void ) {
 	inBuyZonePrev = false;
 
 	//yerrr
-	const idVec3 & masterOrigin = GetPhysics()->GetOrigin();
+	const idVec3 & masterOrigin = GetPhysics()->GetOrigin(); //get player's origin
+	
+	if (deathCount % 2 == 0) //saves first run's origin and every other run
+		ghostOrigin1.Append(masterOrigin);
+	else //saves second run's origin and every other run
+		ghostOrigin2.Append(masterOrigin);
 	
 	//gameLocal.Printf("Origin %f,%f,%f", masterOrigin[0], masterOrigin[1], masterOrigin[2]);
 	//yerrr end
@@ -9764,6 +9770,17 @@ idPlayer::Killed
 */
 void idPlayer::Killed( idEntity *inflictor, idEntity *attacker, int damage, const idVec3 &dir, int location ) {
 	float delay;
+	
+	//yerrr
+	if (deathCount > 0){ //if player has died at least once
+		if (deathCount % 2 == 1) //erase contents of first run upon death, and every other after that
+			ghostOrigin1.Clear();
+		else //erase contents of second run upon death, and every other after
+			ghostOrigin2.Clear();
+	}
+
+	deathCount++; //has to be after the if statement above
+	//yerrr end
 
 	assert( !gameLocal.isClient );
 

@@ -5,6 +5,8 @@
 
 #ifndef __GAME_PLAYER_H__
 #define __GAME_PLAYER_H__
+//yerrr
+//#include <list>
 
 /*
 ===============================================================================
@@ -1159,6 +1161,8 @@ private:
 	float wounded, bleeding;
 	idEntity *wound, *blood;
 	int woundCooldown = NULL, bloodCooldown = NULL, deathCount, ghostCount;
+
+	idList<idVec3> ghostOrigin1, ghostOrigin2;
 	//yerrr end
  	CLASS_STATES_PROTOTYPE( idPlayer );
 };
