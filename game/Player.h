@@ -1161,6 +1161,7 @@ private:
 	float wounded, bleeding;
 	idEntity *wound, *blood;
 	int woundCooldown = NULL, bloodCooldown = NULL, ghostCooldown = NULL, ghostCooldown2 = NULL, deathCount, ghostCount;
+	bool ghostAlive = false;
 
 	idEntity *ghost = NULL;
 	idList<idVec3> ghostOrigin1, ghostOrigin2;

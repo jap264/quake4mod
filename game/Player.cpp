@@ -1554,9 +1554,8 @@ void idPlayer::Init( void ) {
 	deathCount = 0;
 	ghostCount = 0;
 	ghostCooldown = 0;
-
-	if (deathCount > 0)
-		SpawnGhost();
+	ghostAlive = false;
+	
 	//yerrr end
 
 	lightningEffects		= 0;
@@ -9171,6 +9170,13 @@ void idPlayer::UpdateIntentDir ( void ) {
 			Damage(wound, wound, idVec3(0, 0, 0), "damage_blood", 1, 0);
 			bloodCooldown = 500;
 		}
+		
+		if (deathCount > 0){
+			if (!ghostAlive){
+				SpawnGhost();
+				ghostAlive = true;
+			}
+		}
 		//yerrr end
 	}
 	BiasIntentDir( newIntentDir, prevBias );
@@ -14167,8 +14173,8 @@ void idPlayer::SpawnGhost(){
 	//char* test = "spawn Monster_StroggMarine";
 	//const idCmdArgs name(test, true);
 
-	//idPlayer* player;
-	//player = gameLocal.GetLocalPlayer();
+	idPlayer* player;
+	player = gameLocal.GetLocalPlayer();
 
 	idDict                test;
 	float                 yaw = gameLocal.GetLocalPlayer()->viewAngles.yaw;
@@ -14176,11 +14182,13 @@ void idPlayer::SpawnGhost(){
 	test.Set("angle", va("%f", yaw + 180));
 
 	//So what I need is that the thing needs to know where to spawn the monster 
-	idVec3 org;
+	idVec3 org = player->GetPhysics()->GetOrigin() + idAngles(0, yaw, 0).ToForward() * 80 + idVec3(0, 0, 1);
+	
 	if (deathCount % 2 == 1) //second run (even numbered runs)
 		org = ghostOrigin1.operator[](0);
-	else //third run (even numbered runs)
+	else //third run (odd numbered runs)
 		org = ghostOrigin2.operator[](0);
+	
 
 	test.Set("origin", org.ToString());
 
