@@ -1160,7 +1160,7 @@ private:
 	//yerrr
 	float wounded, bleeding;
 	idEntity *wound, *blood;
-	int woundCooldown = NULL, bloodCooldown = NULL, ghostCooldown = NULL, ghostCooldown2 = NULL, deathCount, ghostCount;
+	int woundCooldown = NULL, bloodCooldown = NULL, ghostCooldown = NULL, ghostCooldown2 = NULL, deathCount = 0, ghostCount;
 	bool ghostAlive = false;
 
 	idEntity *ghost = NULL;

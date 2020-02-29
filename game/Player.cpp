@@ -1551,7 +1551,7 @@ void idPlayer::Init( void ) {
 	blood = NULL;
 	bloodCooldown = 500;
 
-	deathCount = 0;
+	//deathCount = 0;
 	ghostCount = 0;
 	ghostCooldown = 0;
 	ghostAlive = false;
@@ -9173,6 +9173,7 @@ void idPlayer::UpdateIntentDir ( void ) {
 		
 		if (deathCount > 0){
 			if (!ghostAlive){
+				gameLocal.Printf("Checked if ghost was alive");
 				SpawnGhost();
 				ghostAlive = true;
 			}
@@ -9684,13 +9685,19 @@ void idPlayer::Think( void ) {
 	const idVec3 & masterOrigin = GetPhysics()->GetOrigin(); //get player's origin
 	ghostCooldown++;
 	ghostCooldown2++;
+	//gameLocal.Printf("ghostCooldown %i", ghostCooldown);
 
-	if (ghostCooldown == 10000){
-		if (deathCount % 2 == 0) //saves first run's origin and every other run
+	if (ghostCooldown == 250){
+		if (deathCount % 2 == 0){ //saves first run's origin and every other run
 			ghostOrigin1.Append(masterOrigin);
-
-		else //saves second run's origin and every other run
+			gameLocal.Printf("%i", ghostOrigin1.Num());
+			//gameLocal.Printf("saved origin into list 1");
+		}
+		else{ //saves second run's origin and every other run
 			ghostOrigin2.Append(masterOrigin);
+			
+			//gameLocal.Printf("saved origin into list 2");
+		}
 
 		ghostCooldown = 0; //reset cooldown
 	}
@@ -9698,16 +9705,18 @@ void idPlayer::Think( void ) {
 	
 	if (deathCount > 0){
 		
-		ghostCount = 1;
+		ghostCount = 1; //iterates the index of the list
 
-		if (ghostCooldown2 == 10000){
+		if (ghostCooldown2 == 250){
 
-			if (deathCount % 2 == 1)
+			if (deathCount % 2 == 1){
 				((idAI*)ghost)->SetOrigin(ghostOrigin1.operator[](ghostCount));
-		
-			else
+				gameLocal.Printf("set origin from list 1");
+			}
+			else{
 				((idAI*)ghost)->SetOrigin(ghostOrigin2.operator[](ghostCount));
-			
+				gameLocal.Printf("set origin from list 2");
+			}
 			ghostCount++;
 			ghostCooldown2 = 0;
 		}
@@ -14182,13 +14191,14 @@ void idPlayer::SpawnGhost(){
 	test.Set("angle", va("%f", yaw + 180));
 
 	//So what I need is that the thing needs to know where to spawn the monster 
-	idVec3 org = player->GetPhysics()->GetOrigin() + idAngles(0, yaw, 0).ToForward() * 80 + idVec3(0, 0, 1);
+	idVec3 org;
 	
 	if (deathCount % 2 == 1) //second run (even numbered runs)
 		org = ghostOrigin1.operator[](0);
 	else //third run (odd numbered runs)
 		org = ghostOrigin2.operator[](0);
 	
+	gameLocal.Printf("Origin %f,%f,%f", org[0], org[1], org[2]);
 
 	test.Set("origin", org.ToString());
 
