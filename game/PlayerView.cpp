@@ -342,8 +342,8 @@ If we need a more generic way to add blobs then we can do that
 but having it localized here lets the material be pre-looked up etc.
 ==================
 */
-void idPlayerView::AddBloodSpray( float duration ) {
-/*
+/*void idPlayerView::AddBloodSpray( float duration ) {
+
 	if ( duration <= 0 || bloodSprayMaterial == NULL || g_skipViewEffects.GetBool() ) {
 		return;
 	}
@@ -378,8 +378,8 @@ void idPlayerView::AddBloodSpray( float duration ) {
 	blob->t1 = t1;
 	blob->s2 = s2;
 	blob->t2 = t2;
-*/
-}
+
+}*/
 
 /*
 ==================
@@ -543,7 +543,7 @@ void idPlayerView::SingleView( idUserInterface *hud, const renderView_t *view, i
 		player->DrawHUD( hud );
 
 			
-/*
+
 		// tunnel vision
 		float	health = 0.0f;
 		if ( g_testHealthVision.GetFloat() != 0.0f ) {
@@ -563,7 +563,7 @@ void idPlayerView::SingleView( idUserInterface *hud, const renderView_t *view, i
 			renderSystem->SetColor4( ( player->health <= 0.0f ) ? MS2SEC( gameLocal.time ) : lastDamageTime, 1.0f, 1.0f, ( player->health <= 0.0f ) ? 0.0f : alpha );
 			renderSystem->DrawStretchPic( 0.0f, 0.0f, 640.0f, 480.0f, 0.0f, 0.0f, 1.0f, 1.0f, tunnelMaterial );
 		}
-*/		
+		
 
 		
 

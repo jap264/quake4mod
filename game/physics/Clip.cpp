@@ -998,7 +998,8 @@ int idClip::ClipModelsTouchingBounds( const idBounds &bounds, int contentMask, i
 		parms.list[ parms.count++ ] = model;
 	}
 // RAVEN END
-
+	//idVec3 dir;
+	//idPlayer::Damage(wound, wound, dir, "damage_wound", 1, 0);
 	return parms.count;
 }
 

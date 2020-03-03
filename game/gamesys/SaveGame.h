@@ -83,7 +83,9 @@ public:
 	void					WriteSoundCommands( void );
 
 	void					WriteBuildNumber( const int value );
-
+	//yerrr
+	void					WriteGhostList(const idList<idVec3> &list);
+	//yerrr end
 protected:
 	idFile *				file;
 
@@ -166,6 +168,10 @@ public:
 	void					ReadSoundCommands( void );
 
 	void					ReadBuildNumber( void );
+
+	//yerrr
+	void					ReadGhostList(const idList<idVec3> &list);
+	//yerrr end
 
 	//						Used to retrieve the saved game buildNumber from within class Restore methods
 	int						GetBuildNumber( void );

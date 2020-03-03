@@ -2658,6 +2658,24 @@ void idPlayer::Restore( idRestoreGame *savefile ) {
 // RAVEN END
 }
 
+//yerrr
+/*
+===============
+idPlayer::SaveGhost
+================
+*/
+void idPlayer::SaveGhost(idSaveGame *savefile) const {
+	savefile->WriteGhostList(ghostOrigin1);
+}
+
+/*
+===============
+idPlayer::RestoreGhost
+================
+*/
+void idPlayer::RestoreGhost(idSaveGame *savefile) const {
+	savefile->WriteGhostList(ghostOrigin1);
+}
 /*
 ===============
 idPlayer::PrepareForRestart

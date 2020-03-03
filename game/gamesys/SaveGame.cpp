@@ -297,6 +297,16 @@ void idSaveGame::WriteBounds( const idBounds &bounds ) {
 	file->Write( &bounds, sizeof( bounds ) );
 }
 
+//yerrr
+/*
+================
+idSaveGame::WriteGhostList
+================
+*/
+void WriteGhostList(const idList<idVec3> &list) {
+	file->WriteGhostList(list);
+}
+//yerrr end
 /*
 ================
 idSaveGame::WriteBounds
@@ -974,9 +984,6 @@ idSaveGame::WriteBuildNumber
 void idSaveGame::WriteBuildNumber( const int value ) {
 	WriteInt( value );
 }
-
-
-
 
 
 

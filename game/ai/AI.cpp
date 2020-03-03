@@ -3679,6 +3679,7 @@ void idAI::OnDeath( void ){
 		// Fixme!  Is this safe to do immediately?
 		vehicleController.Eject();
 	}
+	//player->health = player->inventory.maxHealth;
 
 	aiManager.RemoveTeammate ( this );
 

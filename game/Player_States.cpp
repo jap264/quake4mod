@@ -45,7 +45,6 @@ STATE("Legs_Dead", idPlayer::State_Legs_Dead)
 
 END_CLASS_STATES
 
-int jumpCount = 0;
 /*
 ================
 idPlayer::State_Torso_Idle
@@ -798,7 +797,6 @@ stateResult_t idPlayer::State_Legs_Jump ( const stateParms_t& parms ) {
 				PlayAnim ( ANIMCHANNEL_LEGS, "run_jump", parms.blendFrames );
 			} else {
 				PlayAnim ( ANIMCHANNEL_LEGS, "jump", parms.blendFrames );
-				jumpCount++;
 			}
 			return SRESULT_STAGE ( STAGE_WAIT );
 		
@@ -808,7 +806,7 @@ stateResult_t idPlayer::State_Legs_Jump ( const stateParms_t& parms ) {
 				return SRESULT_DONE;
 			}
 			else if (!pfl.onGround){
-				if (pfl.jump && jumpCount < 2){
+				if (pfl.jump){
 					PostAnimState(ANIMCHANNEL_LEGS, "Legs_Jump", 4);
 					return SRESULT_DONE;
 				}
@@ -846,7 +844,7 @@ stateResult_t idPlayer::State_Legs_Fall ( const stateParms_t& parms ) {
 				return SRESULT_DONE;
 			}
 			else if (!pfl.onGround){
-				if (pfl.jump && jumpCount < 2){
+				if (pfl.jump){
 					PostAnimState(ANIMCHANNEL_LEGS, "Legs_Jump", 4);
 					return SRESULT_DONE;
 				}
@@ -862,7 +860,6 @@ idPlayer::State_Legs_Land
 ================
 */
 stateResult_t idPlayer::State_Legs_Land ( const stateParms_t& parms ) {
-	jumpCount = 0;
 	enum {
 		STAGE_INIT,
 		STAGE_WAIT

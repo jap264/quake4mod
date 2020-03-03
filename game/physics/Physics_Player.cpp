@@ -44,7 +44,9 @@ const int PMF_TIME_WATERJUMP = 128;		// movementTime is waterjump
 const int PMF_ALL_TIMES = (PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_KNOCKBACK);
 
 int c_pmove = 0;
+//yerrr
 int jumpcount = 0;
+
 
 float idPhysics_Player::Pm_Accelerate(void) {
 	return gameLocal.IsMultiplayer() ? PM_ACCELERATE_MP : PM_ACCELERATE_SP;
@@ -655,7 +657,7 @@ void idPhysics_Player::AirMove(void) {
 		}
 	}
 	// RAVEN END
-
+	//yerrr
 	if (idPhysics_Player::CheckJump()) {
 		// jumped away
 		if (waterLevel > WATERLEVEL_FEET) {
@@ -1326,9 +1328,10 @@ bool idPhysics_Player::CheckJump(void) {
 	addVelocity *= idMath::Sqrt(addVelocity.Normalize());
 	//current.velocity += addVelocity;
 
+	//yerrr
 	if (jumpcount < 2){
 		jumpcount++;
-		gameLocal.Printf("JumpCount %d", jumpcount);
+		//gameLocal.Printf("JumpCount %d", jumpcount);
 		if (current.velocity.z < 0.0f)
 			current.velocity = addVelocity * 1.4f;
 		else
