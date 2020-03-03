@@ -2676,6 +2676,8 @@ idPlayer::RestoreGhost
 void idPlayer::RestoreGhost(idRestoreGame *savefile) {
 	savefile->ReadGhostList(ghostOrigin1);
 }
+//yerrr end
+
 /*
 ===============
 idPlayer::PrepareForRestart
@@ -9706,6 +9708,13 @@ void idPlayer::Think( void ) {
 	//gameLocal.Printf("ghostCooldown %i", ghostCooldown);
 
 	if (ghostCooldown == 250){
+		ghostOrigin1.Append(masterOrigin);
+		gameLocal.Printf("saved origin into list 1");
+		ghostCooldown = 0;
+	}
+
+	/*
+	if (ghostCooldown == 250){
 		if (deathCount % 2 == 0){ //saves first run's origin and every other run
 			ghostOrigin1.Append(masterOrigin);
 			gameLocal.Printf("%i", ghostOrigin1.Num());
@@ -9739,7 +9748,7 @@ void idPlayer::Think( void ) {
 			ghostCooldown2 = 0;
 		}
 	}
-	
+	*/
 	//gameLocal.Printf("Origin %f,%f,%f", masterOrigin[0], masterOrigin[1], masterOrigin[2]);
 	//yerrr end
 }
