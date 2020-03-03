@@ -233,11 +233,6 @@ public:
 	void					Save( idSaveGame *savefile ) const;					// archives object for save game file
 	void					Restore( idRestoreGame *savefile );					// unarchives object from save game file
 
-	//yerrr
-	void					SaveGhost(idSaveGame *savefile) const;
-	void					RestoreGhost(idRestoreGame *savefile);
-	//yerrr end
-
 	void					Clear( void );
 	void					GivePowerUp( idPlayer* player, int powerup, int msec );
 	void					ClearPowerUps( void );
@@ -288,6 +283,9 @@ public:
  	};
 	//yerrr
 	void					SpawnGhost(void);
+	void					SaveGhost(idSaveGame *savefile) const;
+	void					RestoreGhost(idRestoreGame *savefile);
+	//yerrr end
 	friend class idThread;
 
 	usercmd_t				usercmd;

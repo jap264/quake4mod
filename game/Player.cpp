@@ -2673,8 +2673,8 @@ void idPlayer::SaveGhost(idSaveGame *savefile) const {
 idPlayer::RestoreGhost
 ================
 */
-void idPlayer::RestoreGhost(idSaveGame *savefile) const {
-	savefile->WriteGhostList(ghostOrigin1);
+void idPlayer::RestoreGhost(idRestoreGame *savefile) {
+	savefile->ReadGhostList(ghostOrigin1);
 }
 /*
 ===============

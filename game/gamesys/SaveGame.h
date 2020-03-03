@@ -170,7 +170,7 @@ public:
 	void					ReadBuildNumber( void );
 
 	//yerrr
-	void					ReadGhostList(const idList<idVec3> &list);
+	void					ReadGhostList( idList<idVec3> &list);
 	//yerrr end
 
 	//						Used to retrieve the saved game buildNumber from within class Restore methods

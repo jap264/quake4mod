@@ -73,6 +73,10 @@ public:
 	virtual int				ReadMat3( idMat3 &mat ) = 0;
 	virtual int				ReadBounds( idBounds &bounds ) = 0;
 	
+	//yerrr
+	virtual int				ReadGhostList(idList<idVec3> &list) = 0;
+	//yerrr end
+
 	// Endian portable alternatives to Write(...)
 	virtual int				WriteInt( const int value ) = 0;
 	virtual int				WriteUnsignedInt( const unsigned int value ) = 0;
@@ -90,6 +94,10 @@ public:
 	virtual int				WriteVec6( const idVec6 &vec ) = 0;
 	virtual int				WriteMat3( const idMat3 &mat ) = 0;
 	virtual int				WriteBounds( const idBounds &bounds ) = 0;
+
+	//yerrr
+	virtual int				WriteGhostList(const idList<idVec3> &list) = 0;
+	//yerrr end
 
 	// dluetscher: added method to write a structure array that is made up of numerics (floats, ints) from the given storage
 	virtual void			WriteNumericStructArray( int numStructElements, int tokenSubTypeStructElements[], int arrayCount, byte *arrayStorage, const char *prepend ) = 0;
