@@ -74,7 +74,7 @@ public:
 	virtual int				ReadBounds( idBounds &bounds ) = 0;
 	
 	//yerrr
-	virtual int				ReadGhostList(idList<idVec3> &list) = 0;
+	//virtual int				ReadGhostList(idList<idVec3> &list) = 0;
 	//yerrr end
 
 	// Endian portable alternatives to Write(...)
@@ -96,7 +96,7 @@ public:
 	virtual int				WriteBounds( const idBounds &bounds ) = 0;
 
 	//yerrr
-	virtual int				WriteGhostList(const idList<idVec3> &list) = 0;
+	//virtual int				WriteGhostList( idList<idVec3> &list) = 0;
 	//yerrr end
 
 	// dluetscher: added method to write a structure array that is made up of numerics (floats, ints) from the given storage
@@ -157,7 +157,10 @@ public:
 	virtual int				ReadVec6( idVec6 &vec );
 	virtual int				ReadMat3( idMat3 &mat );
 	virtual int				ReadBounds( idBounds &bounds );
-	
+	//yerrr
+	//virtual int				ReadGhostList(idList<idVec3> &list);
+	//yerrr end
+
 	// Endian portable alternatives to Write(...)
 	virtual int				WriteInt( const int value );
 	virtual int				WriteUnsignedInt( const unsigned int value );
@@ -175,6 +178,9 @@ public:
 	virtual int				WriteVec6( const idVec6 &vec );
 	virtual int				WriteMat3( const idMat3 &mat );
 	virtual int				WriteBounds( const idBounds &bounds );
+	//yerrr
+	//virtual int				WriteGhostList(const idList<idVec3> &list);
+	//yerrr end
 
 	// dluetscher: added method to write a structure array that is made up of numerics (floats, ints) from the given storage
 	virtual void			WriteNumericStructArray( int numStructElements, int tokenSubTypeStructElements[], int arrayCount, byte *arrayStorage, const char *prepend );
@@ -317,7 +323,10 @@ public:
 	virtual int				ReadVec5( idVec5 &vec );
 	virtual int				ReadVec6( idVec6 &vec );
 	virtual int				ReadMat3( idMat3 &mat );
-	
+	//yerrr
+	//virtual int				ReadGhostList(idList<idVec3> &list);
+	//yerrr end
+
 	// Endian portable alternatives to Write(...)
 	virtual int				WriteInt( const int value );
 	virtual int				WriteUnsignedInt( const unsigned int value );
@@ -334,6 +343,9 @@ public:
 	virtual int				WriteVec5( const idVec5 &vec );
 	virtual int				WriteVec6( const idVec6 &vec );
 	virtual int				WriteMat3( const idMat3 &mat );
+	//yerrr
+	//virtual int				WriteGhostList(const idList<idVec3> &list);
+	//yerrr end
 
 	// dluetscher: added method to write a structure array that is made up of numerics (floats, ints) from the given storage
 	virtual void			WriteNumericStructArray( int numStructElements, int tokenSubTypeStructElements[], int arrayCount, byte *arrayStorage, const char *prepend );

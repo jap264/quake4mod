@@ -17,6 +17,7 @@
 #include "ai/AAS_tactical.h"
 #include "Healing_Station.h"
 #include "ai/AI_Medic.h"
+#include <stdio.h> //yerrr needed to use files
 
 // RAVEN BEGIN
 // nrausch: support for turning the weapon change ui on and off
@@ -1544,18 +1545,13 @@ void idPlayer::Init( void ) {
  	talkCursor				= 0;
 
 	//yerrr
-	wounded = 0;
 	wound = NULL;
-	woundCooldown = 100;
-	bleeding = 0;
 	blood = NULL;
 	bloodCooldown = 500;
 
-	//deathCount = 0;
-	ghostCount = 0;
+	ghostIndex = 0;
 	ghostCooldown = 0;
 	ghostAlive = false;
-	
 	//yerrr end
 
 	lightningEffects		= 0;
@@ -2664,18 +2660,18 @@ void idPlayer::Restore( idRestoreGame *savefile ) {
 idPlayer::SaveGhost
 ================
 */
-void idPlayer::SaveGhost(idSaveGame *savefile) const {
-	savefile->WriteGhostList(ghostOrigin1);
-}
+/*void idPlayer::SaveGhost(idFile *savefile, idList<idVec3> &list) const {
+	savefile->WriteGhostList(list);
+}*/
 
 /*
 ===============
 idPlayer::RestoreGhost
 ================
 */
-void idPlayer::RestoreGhost(idRestoreGame *savefile) {
-	savefile->ReadGhostList(ghostOrigin1);
-}
+/*void idPlayer::RestoreGhost(idFile *savefile, idList<idVec3> &list) {
+	savefile->ReadGhostList(list);
+}*/
 //yerrr end
 
 /*
@@ -9111,7 +9107,7 @@ void idPlayer::Move( void ) {
 		acc->dir[2] = 200;
 		acc->dir[0] = acc->dir[1] = 0;
 		//yerrr
-		Damage(blood, blood, idVec3(0, 0, 0), "damage_blood", 1, 0);
+		Damage(blood, blood, idVec3(0, 0, 0), "damage_blood", 1, 0); //every time the player jumps, he bleeds
 		//yerrr end
 	}
 
@@ -9185,18 +9181,17 @@ void idPlayer::UpdateIntentDir ( void ) {
 			prevBias = 39.0f;
 		}
 		//yerrr
+		playerAlive = true;
 		bloodCooldown--;
-		if (bloodCooldown == 0){
-			Damage(wound, wound, idVec3(0, 0, 0), "damage_blood", 1, 0);
+		if (bloodCooldown == 0){ //everytime bloodcooldown reaches 0, hurt the player
+			Damage(blood, blood, idVec3(0, 0, 0), "damage_blood", 1, 0);
 			bloodCooldown = 500;
 		}
 		
-		if (deathCount > 0){
-			if (!ghostAlive){
-				gameLocal.Printf("Checked if ghost was alive");
-				SpawnGhost();
-				ghostAlive = true;
-			}
+		if (deathCount > 0 && !ghostAlive){ //spawns ghost when player touches the ground after first death
+			gameLocal.Printf("Checked if ghost was alive");
+			SpawnGhost();
+			ghostAlive = true;
 		}
 		//yerrr end
 	}
@@ -9702,53 +9697,35 @@ void idPlayer::Think( void ) {
 	inBuyZonePrev = false;
 
 	//yerrr
-	const idVec3 & masterOrigin = GetPhysics()->GetOrigin(); //get player's origin
+	const idVec3 & playerOrigin = GetPhysics()->GetOrigin(); //get player's origin
+	const int playerTime = gameLocal.time;
 	ghostCooldown++;
 	ghostCooldown2++;
 	//gameLocal.Printf("ghostCooldown %i", ghostCooldown);
-
-	if (ghostCooldown == 250){
-		ghostOrigin1.Append(masterOrigin);
-		gameLocal.Printf("saved origin into list 1");
-		ghostCooldown = 0;
-	}
-
-	/*
-	if (ghostCooldown == 250){
-		if (deathCount % 2 == 0){ //saves first run's origin and every other run
-			ghostOrigin1.Append(masterOrigin);
-			gameLocal.Printf("%i", ghostOrigin1.Num());
-			//gameLocal.Printf("saved origin into list 1");
-		}
-		else{ //saves second run's origin and every other run
-			ghostOrigin2.Append(masterOrigin);
-			
-			//gameLocal.Printf("saved origin into list 2");
-		}
-
+	
+	if (ghostCooldown == 250 && playerAlive){ //don't append to list after the player dies //need to check if player is still on ground if dead
+		ghostOrigin.Append(playerOrigin);
 		ghostCooldown = 0; //reset cooldown
 	}
 
-	
-	if (deathCount > 0){
-		
-		ghostCount = 1; //iterates the index of the list
+	/*
+	if (ghostAlive && playerAlive){
 
 		if (ghostCooldown2 == 250){
 
 			if (deathCount % 2 == 1){
-				((idAI*)ghost)->SetOrigin(ghostOrigin1.operator[](ghostCount));
+				((idAI*)ghost)->SetOrigin(ghostOrigin1.operator[](ghostIndex));
 				gameLocal.Printf("set origin from list 1");
 			}
 			else{
-				((idAI*)ghost)->SetOrigin(ghostOrigin2.operator[](ghostCount));
+				((idAI*)ghost)->SetOrigin(ghostOrigin2.operator[](ghostIndex));
 				gameLocal.Printf("set origin from list 2");
 			}
-			ghostCount++;
+			ghostIndex++;
 			ghostCooldown2 = 0;
 		}
-	}
-	*/
+	}*/
+	
 	//gameLocal.Printf("Origin %f,%f,%f", masterOrigin[0], masterOrigin[1], masterOrigin[2]);
 	//yerrr end
 }
@@ -9838,16 +9815,11 @@ idPlayer::Killed
 */
 void idPlayer::Killed( idEntity *inflictor, idEntity *attacker, int damage, const idVec3 &dir, int location ) {
 	float delay;
-	
-	//yerrr
-	if (deathCount > 0){ //if player has died at least once
-		if (deathCount % 2 == 1) //erase contents of first run upon death, and every other after that
-			ghostOrigin1.Clear();
-		else //erase contents of second run upon death, and every other after
-			ghostOrigin2.Clear();
 
-		idEntity *ghost = NULL; //clears old ghost
-	}
+	//yerrr
+	playerAlive = false; //player is no longer alive
+
+	timeOfDeath = gameLocal.time; //int for comparing time of death in file
 
 	deathCount++; //has to be after the if statement above
 	//yerrr end
@@ -10387,9 +10359,7 @@ void idPlayer::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &di
 		health -= damage;
 
 		//yerrr
-		wounded = 5;
 		wound = attacker;
-		bleeding = 1;
 		blood = attacker;
 		//yerrr end
 
@@ -14213,29 +14183,80 @@ void idPlayer::SpawnGhost(){
 	player = gameLocal.GetLocalPlayer();
 
 	idDict                test;
-	float                 yaw = gameLocal.GetLocalPlayer()->viewAngles.yaw;
+	//float                 yaw = gameLocal.GetLocalPlayer()->viewAngles.yaw;
 	test.Set("classname", "monster_strogg_marine");
-	test.Set("angle", va("%f", yaw + 180));
+	//test.Set("angle", va("%f", yaw + 180));
 
-	//So what I need is that the thing needs to know where to spawn the monster 
-	idVec3 org;
-	
-	if (deathCount % 2 == 1) //second run (even numbered runs)
-		org = ghostOrigin1.operator[](0);
-	else //third run (odd numbered runs)
-		org = ghostOrigin2.operator[](0);
-	
-	gameLocal.Printf("Origin %f,%f,%f", org[0], org[1], org[2]);
+	idVec3 org = ghostOrigin.operator[](0);
+
+	//gameLocal.Printf("Origin %f,%f,%f", org[0], org[1], org[2]);
 
 	test.Set("origin", org.ToString());
 
-	//idEntity *ghost = NULL;
+	idEntity *ghost = NULL;
 
 	gameLocal.SpawnEntityDef(test, &ghost);
 
 	((idAI*)ghost)->team = gameLocal.GetLocalPlayer()->team;
-	((idAI*)ghost)->SetLeader(gameLocal.GetLocalPlayer());
+	//((idAI*)ghost)->SetLeader(gameLocal.GetLocalPlayer()); if i wanted them to follow me
 	((idAI*)ghost)->aifl.undying = true;
+	((idAI*)ghost)->BecomeNonSolid();
+	((idAI*)ghost)->combat.fl.ignoreEnemies = true;
+	((idAI*)ghost)->combat.fl.aware = false;
+	((idAI*)ghost)->SetEnemy(NULL);
+	
+}
+
+void idPlayer::SaveGhost(){
+	//first, we need to write the time of death
+	FILE * pFile;
+	//open the file, w+ means write and update
+	pFile = fopen("ghostfile.txt", "w+");
+
+	//write the time of death
+	fprintf(pFile, "%i\n", timeOfDeath);
+
+	//next, we need to write each idVec3 in the ghostOrigin list
+	for (int x = 0; x < ghostOrigin.Num(); x++){
+		idVec3 temp = ghostOrigin[x];
+		fprintf(pFile, "%f %f %f\n", temp[0], temp[1], temp[2]);
+	}
+
+	//then we close the file
+	fclose(pFile);
+}
+
+void idPlayer::ReadGhost(){
+	//open the file
+	FILE * pFile = fopen("ghostfile.txt", "r");
+	float tempX, tempY, tempZ;
+	idVec3 temp;
+
+	//make a while loop going to the file
+	while(fscanf(pFile, "%f %f %f\n", tempX, tempY, tempZ) == 3){ //do the following code if fscanf sucessfully reads 3 items
+		//store the floats into a idVec3 then store that idVec3 into the list
+		temp[0] = tempX;
+		temp[1] = tempY;
+		temp[2] = tempZ;
+		ghostOrigin.Append(temp);
+	}
+}
+
+bool idPlayer::IsThisRunFarther(){
+	int TOD; //reading the time of death from a file
+	bool result;
+	FILE * pFile = fopen("ghostfile.txt", "r");
+
+	fscanf(pFile, "%i", &TOD); //finds the first int and saves it into TOD
+
+	//check if current time of death is greater than TOD in the file
+	if (timeOfDeath >= TOD)
+		result = true;
+	else
+		result = false;
+
+	fclose(pFile);
+	return result;
 }
 //yerrr end
 // RITUAL END

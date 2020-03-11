@@ -303,9 +303,9 @@ void idSaveGame::WriteBounds( const idBounds &bounds ) {
 idSaveGame::WriteGhostList
 ================
 */
-void idSaveGame::WriteGhostList(const idList<idVec3> &list) {
+/*void idSaveGame::WriteGhostList( idList<idVec3> &list) {
 	file->WriteGhostList(list);
-}
+}*/
 //yerrr end
 
 /*
@@ -1276,9 +1276,9 @@ void idRestoreGame::ReadBounds( idBounds &bounds ) {
 idRestoreGame::ReadGhostList
 ================
 */
-void idRestoreGame::ReadGhostList(idList<idVec3> &list) {
+/*void idRestoreGame::ReadGhostList(idList<idVec3> &list) {
 	file->ReadGhostList(list);
-}
+}*/
 //yerrr end
 
 /*

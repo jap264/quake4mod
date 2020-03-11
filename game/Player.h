@@ -283,8 +283,11 @@ public:
  	};
 	//yerrr
 	void					SpawnGhost(void);
-	void					SaveGhost(idSaveGame *savefile) const;
-	void					RestoreGhost(idRestoreGame *savefile);
+	void					SaveGhost(void);
+	void					ReadGhost(void);
+	bool					IsThisRunFarther(void);
+	//void					SaveGhost(idFile *savefile, idList<idVec3> &list) const;
+	//void					RestoreGhost(idFile *savefile, idList<idVec3> &list);
 	//yerrr end
 	friend class idThread;
 
@@ -1161,13 +1164,22 @@ private:
 	stateResult_t			State_Legs_Dead					( const stateParms_t& parms );
 	
 	//yerrr
-	float wounded, bleeding;
-	idEntity *wound, *blood;
-	int woundCooldown = NULL, bloodCooldown = NULL, ghostCooldown = NULL, ghostCooldown2 = NULL, deathCount = 0, ghostCount;
-	bool ghostAlive = false;
+	idEntity	*wound,	//creates sliding effect
+				*blood;		//bleeding out effect
+
+	int bloodCooldown = NULL,	//cooldown for the bleeding out effect
+		ghostCooldown = NULL,	//cooldown for saving the player's position
+		ghostCooldown2 = NULL,	//cooldown for setting the ghost's position
+		deathCount = 0,			//num of deaths
+		ghostIndex = 0,			//iterates the index of the ghostOrigin list
+		timeOfDeath = NULL;		//time the player dies
+
+	bool ghostAlive = false, //is the ghost alive?
+		playerAlive = true;  //is the player alive?
 
 	idEntity *ghost = NULL;
-	idList<idVec3> ghostOrigin1, ghostOrigin2;
+	idList<idVec3>	ghostOrigin; //list of ghost origins
+
 	//yerrr end
  	CLASS_STATES_PROTOTYPE( idPlayer );
 };
