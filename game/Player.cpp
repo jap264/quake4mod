@@ -44,7 +44,7 @@ idCVar net_showPredictionError( "net_showPredictionError", "-1", CVAR_INTEGER | 
 
 ===============================================================================
 */
-
+//bool powerupsAreActive = false; //does the player have powerups? yerrr
 #ifdef _XENON
 bool g_ObjectiveSystemOpen = false;
 #endif
@@ -9188,7 +9188,7 @@ void idPlayer::UpdateIntentDir ( void ) {
 			bloodCooldown = 500;
 		}
 		
-		if (deathCount > 0 && !ghostAlive){ //spawns ghost when player touches the ground after first death
+		if (playerAlive && deathCount > 0 && !ghostAlive){ //spawns ghost when player touches the ground after first death
 			gameLocal.Printf("Checked if ghost was alive");
 			SpawnGhost();
 			ghostAlive = true;
@@ -9697,34 +9697,54 @@ void idPlayer::Think( void ) {
 	inBuyZonePrev = false;
 
 	//yerrr
+	/*if (powerupsAreActive){
+		if (!PowerUpActive(POWERUP_QUADDAMAGE) && !PowerUpActive(POWERUP_REGENERATION) && !PowerUpActive(POWERUP_HASTE)){
+			powerUpSkin = NULL;
+			powerupsAreActive = false;
+			ClearPowerUps();
+		}
+	}*/
+
+	//Clearing powerups
+	/*if (PowerUpActive(POWERUP_QUADDAMAGE)){
+		if (inventory.powerupEndTime)
+		StopPowerUpEffect(POWERUP_QUADDAMAGE);
+		ClearPowerup(POWERUP_QUADDAMAGE);
+		
+	}
+
+	if (PowerUpActive(POWERUP_REGENERATION)){
+		StopPowerUpEffect(POWERUP_REGENERATION);
+		ClearPowerup(POWERUP_REGENERATION);
+	}
+
+	if (PowerUpActive(POWERUP_HASTE)){
+		StopPowerUpEffect(POWERUP_HASTE);
+		ClearPowerup(POWERUP_HASTE);
+	}*/
+
+	//For Ghost
 	const idVec3 & playerOrigin = GetPhysics()->GetOrigin(); //get player's origin
-	const int playerTime = gameLocal.time;
 	ghostCooldown++;
 	ghostCooldown2++;
 	//gameLocal.Printf("ghostCooldown %i", ghostCooldown);
 	
-	if (ghostCooldown == 250 && playerAlive){ //don't append to list after the player dies //need to check if player is still on ground if dead
+	if (ghostCooldown == 250 && playerAlive){ //don't append to list after the player dies
 		ghostOrigin.Append(playerOrigin);
 		ghostCooldown = 0; //reset cooldown
 	}
 
-	/*
-	if (ghostAlive && playerAlive){
+	
+	if (ghostAlive && playerAlive){ //playerAlive is always true until Killed function is called
 
 		if (ghostCooldown2 == 250){
-
-			if (deathCount % 2 == 1){
-				((idAI*)ghost)->SetOrigin(ghostOrigin1.operator[](ghostIndex));
-				gameLocal.Printf("set origin from list 1");
-			}
-			else{
-				((idAI*)ghost)->SetOrigin(ghostOrigin2.operator[](ghostIndex));
-				gameLocal.Printf("set origin from list 2");
-			}
+			((idAI*)ghost)->SetOrigin(ghostOrigin.operator[](ghostIndex));
+			gameLocal.Printf("set origin from list 1");
+			
 			ghostIndex++;
 			ghostCooldown2 = 0;
 		}
-	}*/
+	}
 	
 	//gameLocal.Printf("Origin %f,%f,%f", masterOrigin[0], masterOrigin[1], masterOrigin[2]);
 	//yerrr end
@@ -14233,13 +14253,15 @@ void idPlayer::ReadGhost(){
 	idVec3 temp;
 
 	//make a while loop going to the file
-	while(fscanf(pFile, "%f %f %f\n", tempX, tempY, tempZ) == 3){ //do the following code if fscanf sucessfully reads 3 items
+	while(fscanf(pFile, "%f %f %f\n", &tempX, &tempY, &tempZ) == 3){ //do the following code if fscanf sucessfully reads 3 items
 		//store the floats into a idVec3 then store that idVec3 into the list
 		temp[0] = tempX;
 		temp[1] = tempY;
 		temp[2] = tempZ;
 		ghostOrigin.Append(temp);
 	}
+
+	fclose(pFile);
 }
 
 bool idPlayer::IsThisRunFarther(){
@@ -14257,6 +14279,16 @@ bool idPlayer::IsThisRunFarther(){
 
 	fclose(pFile);
 	return result;
+}
+
+bool idPlayer::DoesGhostFileExist(){
+	if (FILE * pFile = fopen("ghostfile.txt", "r")){
+		fclose(pFile);
+		return true;
+	}
+	else{
+		return false;
+	}
 }
 //yerrr end
 // RITUAL END

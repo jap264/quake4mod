@@ -1,4 +1,5 @@
 #Quake Run: Quake 4 Speedrun
+#Developed by Jansen Pimentel
 # 
 #This mod spawns the player with a leg wound. The user must complete the level before bleeding out while fighting monsters on the way.
 #
@@ -16,4 +17,4 @@
 #	-a HUD demonstrating your mind is bouncing to show your health is below max.
 #	-a HUD that will turn red when you're attacked.
 #	-the HUD will fade away when you are close to death, so the player can see clearer.
-#	-a ghost of you're your most previous run will appear after your first run.
+#	-a ghost of you're your farthest run will appear after your first run.

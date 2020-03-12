@@ -5,8 +5,6 @@
 
 #ifndef __GAME_PLAYER_H__
 #define __GAME_PLAYER_H__
-//yerrr
-//#include <list>
 
 /*
 ===============================================================================
@@ -282,10 +280,11 @@ public:
  		EVENT_MAXEVENTS
  	};
 	//yerrr
-	void					SpawnGhost(void);
-	void					SaveGhost(void);
-	void					ReadGhost(void);
-	bool					IsThisRunFarther(void);
+	void					SpawnGhost(void);			//spawns the ghost
+	void					SaveGhost(void);			//saves the ghost origin's into the ghost file
+	void					ReadGhost(void);			//reads the ghost origin's from the ghost file
+	bool					IsThisRunFarther(void);		//checks if this run was farther than the farthest run
+	bool					DoesGhostFileExist(void);	//checks if the ghost file exist
 	//void					SaveGhost(idFile *savefile, idList<idVec3> &list) const;
 	//void					RestoreGhost(idFile *savefile, idList<idVec3> &list);
 	//yerrr end

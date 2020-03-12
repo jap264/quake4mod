@@ -7,7 +7,8 @@
 #pragma hdrstop
 
 #include "Game_local.h"
-
+#include "Player.h" //yerrr
+//extern bool powerupsAreActive;
 
 /*
 ===============================================================================
@@ -605,14 +606,17 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 	//yerrr
 	if (idStr::Icmpn(name, "ammo", 4) == 0){
 		player->GivePowerUp(POWERUP_QUADDAMAGE, SEC2MS(10.0f));
+		//powerupsAreActive = true;
 	}
 
 	if (idStr::Icmpn(name, "item_health", 11) == 0){
 		player->GivePowerUp(POWERUP_REGENERATION, SEC2MS(20.0f));
+		//powerupsAreActive = true;
 	}
 	
 	if (idStr::Icmpn(name, "moveable_item", 13) == 0){
 		player->GivePowerUp(POWERUP_HASTE, SEC2MS(10.0f));
+		//powerupsAreActive = true;
 	}
 
 	/*else if (idStr::Icmpn(name, "small armor") == 0 || idStr::Icmp(name, "large armor") == 0){
