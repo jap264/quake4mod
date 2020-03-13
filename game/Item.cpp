@@ -7,8 +7,7 @@
 #pragma hdrstop
 
 #include "Game_local.h"
-#include "Player.h" //yerrr
-//extern bool powerupsAreActive;
+//#include "Player.h" //yerrr
 
 /*
 ===============================================================================
@@ -605,24 +604,27 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 	}
 	//yerrr
 	if (idStr::Icmpn(name, "ammo", 4) == 0){
-		player->GivePowerUp(POWERUP_QUADDAMAGE, SEC2MS(10.0f));
-		//powerupsAreActive = true;
+		gameLocal.GetLocalPlayer()->GivePowerUp(POWERUP_QUADDAMAGE, SEC2MS(10.0f));
+		gameLocal.GetLocalPlayer()->QuadActive = true;
+	}
+
+	if (idStr::Icmpn(name, "moveable_item", 13) == 0){
+		gameLocal.GetLocalPlayer()->GivePowerUp(POWERUP_HASTE, SEC2MS(10.0f));
+		gameLocal.GetLocalPlayer()->HasteActive = true;
 	}
 
 	if (idStr::Icmpn(name, "item_health", 11) == 0){
-		player->GivePowerUp(POWERUP_REGENERATION, SEC2MS(20.0f));
-		//powerupsAreActive = true;
+		gameLocal.GetLocalPlayer()->GivePowerUp(POWERUP_REGENERATION, SEC2MS(10.0f));
+		gameLocal.GetLocalPlayer()->RegenActive = true;
+		//gameLocal.Printf("regen should be true\n");
 	}
 	
-	if (idStr::Icmpn(name, "moveable_item", 13) == 0){
-		player->GivePowerUp(POWERUP_HASTE, SEC2MS(10.0f));
-		//powerupsAreActive = true;
-	}
 
 	/*else if (idStr::Icmpn(name, "small armor") == 0 || idStr::Icmp(name, "large armor") == 0){
 		player->GivePowerUp(POWERUP_INVISIBILITY, SEC2MS(20.0f));
 	}*/
-	//gameLocal.Printf("["+name+"]");
+	//gameLocal.Printf("powerups are active: %s\n", gameLocal.GetLocalPlayer()->inventory.powerupsAreActive ? "true" : "false");
+	//gameLocal.Printf("# of pwrups: %i\n", gameLocal.GetLocalPlayer()->inventory.powerups);
 	return player->GiveItem( this );
 }
 

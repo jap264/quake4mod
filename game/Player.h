@@ -216,7 +216,7 @@ public:
 	int						startingAmmo[ MAX_WEAPONS ];
 
  	int						lastGiveTime;
- 	
+
 	idList<idDict *>		items;
 	idStrList				pdas;
 	idStrList				pdaSecurity;
@@ -269,6 +269,11 @@ public:
 
 class idPlayer : public idActor {
 public:
+	//yerrr
+	bool					RegenActive = false;
+	bool					QuadActive = false;
+	bool					HasteActive = false;
+	//yerrr end
 
  	enum {
  		EVENT_IMPULSE = idEntity::EVENT_MAXEVENTS,
@@ -280,11 +285,11 @@ public:
  		EVENT_MAXEVENTS
  	};
 	//yerrr
-	void					SpawnGhost(void);			//spawns the ghost
-	void					SaveGhost(void);			//saves the ghost origin's into the ghost file
-	void					ReadGhost(void);			//reads the ghost origin's from the ghost file
-	bool					IsThisRunFarther(void);		//checks if this run was farther than the farthest run
-	bool					DoesGhostFileExist(void);	//checks if the ghost file exist
+	//void					SpawnGhost(void);			//spawns the ghost
+	//void					SaveGhost(void);			//saves the ghost origin's into the ghost file
+	//void					ReadGhost(void);			//reads the ghost origin's from the ghost file
+	//bool					IsThisRunFarther(void);		//checks if this run was farther than the farthest run
+	//bool					DoesGhostFileExist(void);	//checks if the ghost file exist
 	//void					SaveGhost(idFile *savefile, idList<idVec3> &list) const;
 	//void					RestoreGhost(idFile *savefile, idList<idVec3> &list);
 	//yerrr end
@@ -1166,18 +1171,19 @@ private:
 	idEntity	*wound,	//creates sliding effect
 				*blood;		//bleeding out effect
 
-	int bloodCooldown = NULL,	//cooldown for the bleeding out effect
-		ghostCooldown = NULL,	//cooldown for saving the player's position
-		ghostCooldown2 = NULL,	//cooldown for setting the ghost's position
-		deathCount = 0,			//num of deaths
-		ghostIndex = 0,			//iterates the index of the ghostOrigin list
-		timeOfDeath = NULL;		//time the player dies
+	int bloodCooldown = NULL;	//cooldown for the bleeding out effect
+		//ghostCooldown = NULL,	//cooldown for saving the player's position
+		//ghostCooldown2 = NULL,	//cooldown for setting the ghost's position
+		//deathCount = 0,			//num of deaths
+		//ghostIndex = 0,			//iterates the index of the ghostOrigin list
+		//timeOfDeath = NULL;		//time the player dies
 
-	bool ghostAlive = false, //is the ghost alive?
-		playerAlive = true;  //is the player alive?
+	//bool ghostAlive = false, //is the ghost alive?
+	//	playerAlive = true;  //is the player alive?
 
-	idEntity *ghost = NULL;
-	idList<idVec3>	ghostOrigin; //list of ghost origins
+	//idEntity *ghost = NULL;
+	//idList<idVec3>	playerOrigins, //list of player origins to be saved
+	//				ghostOrigins;  //list of ghost origins to be read
 
 	//yerrr end
  	CLASS_STATES_PROTOTYPE( idPlayer );

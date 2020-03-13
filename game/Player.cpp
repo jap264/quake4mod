@@ -2,9 +2,10 @@
 // bdube: note that this file is no longer merged with Doom3 updates
 //
 // MERGE_DATE 09/30/2004
-
 #include "../idlib/precompiled.h"
 #pragma hdrstop
+
+
 
 #include "Game_local.h"
 
@@ -17,7 +18,8 @@
 #include "ai/AAS_tactical.h"
 #include "Healing_Station.h"
 #include "ai/AI_Medic.h"
-#include <stdio.h> //yerrr needed to use files
+//#include <stdio.h> //yerrr needed to use files
+
 
 // RAVEN BEGIN
 // nrausch: support for turning the weapon change ui on and off
@@ -44,7 +46,6 @@ idCVar net_showPredictionError( "net_showPredictionError", "-1", CVAR_INTEGER | 
 
 ===============================================================================
 */
-//bool powerupsAreActive = false; //does the player have powerups? yerrr
 #ifdef _XENON
 bool g_ObjectiveSystemOpen = false;
 #endif
@@ -66,7 +67,7 @@ const float	PLAYER_ITEM_DROP_SPEED	= 100.0f;
 // how many units to raise spectator above default view height so it's in the head of someone
 const int SPECTATE_RAISE = 25;
 
-const int	HEALTH_PULSE		= 1000;			// Regen rate and heal leak rate (for health > 100)
+const int	HEALTH_PULSE		= 2000;			// Regen rate and heal leak rate (for health > 100) //yerrr changed from 1000
 const int	ARMOR_PULSE			= 1000;			// armor ticking down due to being higher than maxarmor
 const int	AMMO_REGEN_PULSE	= 1000;			// ammo regen in Arena CTF
 const int	POWERUP_BLINKS		= 5;			// Number of times the powerup wear off sound plays
@@ -1547,11 +1548,11 @@ void idPlayer::Init( void ) {
 	//yerrr
 	wound = NULL;
 	blood = NULL;
-	bloodCooldown = 500;
+	bloodCooldown = 200;
 
-	ghostIndex = 0;
+	/*ghostIndex = 0;
 	ghostCooldown = 0;
-	ghostAlive = false;
+	ghostAlive = false;*/
 	//yerrr end
 
 	lightningEffects		= 0;
@@ -2654,7 +2655,7 @@ void idPlayer::Restore( idRestoreGame *savefile ) {
 // RAVEN END
 }
 
-//yerrr
+
 /*
 ===============
 idPlayer::SaveGhost
@@ -2672,7 +2673,7 @@ idPlayer::RestoreGhost
 /*void idPlayer::RestoreGhost(idFile *savefile, idList<idVec3> &list) {
 	savefile->ReadGhostList(list);
 }*/
-//yerrr end
+
 
 /*
 ===============
@@ -4582,6 +4583,8 @@ void idPlayer::StopPowerUpEffect( int powerup ) {
 			powerupEffectType = 0;
 
 			StopEffect( "fx_quaddamage" );
+			//yerrr
+			gameLocal.GetLocalPlayer()->QuadActive = false;
 			break;
 		}
 		case POWERUP_REGENERATION: {
@@ -4594,11 +4597,15 @@ void idPlayer::StopPowerUpEffect( int powerup ) {
 				powerupEffectType = 0;
 
 				StopEffect( "fx_regeneration" );
+				//yerrr
+				gameLocal.GetLocalPlayer()->RegenActive = false;
+				//gameLocal.Printf("regen should be false\n");
 			}
 			break;
 		}
 		case POWERUP_HASTE: {
 			StopEffect( "fx_haste" );
+			HasteActive = false;
 			break;
 		}
 		case POWERUP_INVISIBILITY: {
@@ -4897,7 +4904,7 @@ void idPlayer::UpdatePowerUps( void ) {
 			}
 
 			continue;
-		} else if ( inventory.powerupEndTime[ i ] != -1 && gameLocal.isServer ) {
+		} else if ( inventory.powerupEndTime[ i ] != -1 /*&& gameLocal.isServer*/ ) {
 			// This particular powerup needs to respawn in a special way.
 			if ( i == POWERUP_DEADZONE ) {
 				gameLocal.mpGame.GetGameState()->SpawnDeadZonePowerup();
@@ -4923,7 +4930,7 @@ void idPlayer::UpdatePowerUps( void ) {
 		if( health > 0 ) {
 			if ( PowerUpActive ( POWERUP_REGENERATION ) || PowerUpActive ( POWERUP_GUARD ) ) {
 				int healthBoundary = inventory.maxHealth; // health will regen faster under this value, slower above
-				int healthTic = 15;
+				int healthTic = 10; //yerrr changed from 15
 
 				if( PowerUpActive ( POWERUP_GUARD ) ) {
 					// guard max health == 200, so set the boundary back to 100
@@ -4934,27 +4941,15 @@ void idPlayer::UpdatePowerUps( void ) {
 				}
 
 				if ( health < healthBoundary ) {
-					// only actually give health on the server
-					if( gameLocal.isServer ) {
 						health += healthTic;
 						if ( health > (healthBoundary * 1.1f) ) {
 							health = healthBoundary * 1.1f;
 						}
-					}
-					StartSound ( "snd_powerup_regen", SND_CHANNEL_POWERUP, 0, false, NULL );
-					nextHealthPulse = gameLocal.time + HEALTH_PULSE;
-				} else if ( health < (healthBoundary * 2) ) {
-					if( gameLocal.isServer ) {
-						health += healthTic / 3;
-						if ( health > (healthBoundary * 2) ) {
-							health = healthBoundary * 2;
-						}
-					}
 					StartSound ( "snd_powerup_regen", SND_CHANNEL_POWERUP, 0, false, NULL );
 					nextHealthPulse = gameLocal.time + HEALTH_PULSE;
 				}	
 			// Health above max technically isnt a powerup but functions as one so handle it here
-			} else if ( health > inventory.maxHealth && gameLocal.isServer ) { 
+			} else if ( health > inventory.maxHealth) { 
 				nextHealthPulse = gameLocal.time + HEALTH_PULSE;
 				health--;
 			}
@@ -6612,8 +6607,8 @@ bool idPlayer::Collide( const trace_t &collision, const idVec3 &velocity ) {
 			}
 		}
 	}
-	
-	Damage(wound, wound, idVec3(0,0,0), "damage_wound", 1, 0);
+	//yerrr
+	Damage(wound, wound, idVec3(0, 0, 0), "damage_wound", 1, 0);
 
 	return false;
 }
@@ -9107,7 +9102,7 @@ void idPlayer::Move( void ) {
 		acc->dir[2] = 200;
 		acc->dir[0] = acc->dir[1] = 0;
 		//yerrr
-		Damage(blood, blood, idVec3(0, 0, 0), "damage_blood", 1, 0); //every time the player jumps, he bleeds
+		Damage(blood, blood, idVec3(0, 0, 0), "damage_jump", 1, 0); //every time the player jumps, he bleeds
 		//yerrr end
 	}
 
@@ -9181,18 +9176,13 @@ void idPlayer::UpdateIntentDir ( void ) {
 			prevBias = 39.0f;
 		}
 		//yerrr
-		playerAlive = true;
-		bloodCooldown--;
-		if (bloodCooldown == 0){ //everytime bloodcooldown reaches 0, hurt the player
-			Damage(blood, blood, idVec3(0, 0, 0), "damage_blood", 1, 0);
-			bloodCooldown = 500;
-		}
+		//playerAlive = true;
 		
-		if (playerAlive && deathCount > 0 && !ghostAlive){ //spawns ghost when player touches the ground after first death
-			gameLocal.Printf("Checked if ghost was alive");
+		/*if (playerAlive && !ghostAlive && DoesGhostFileExist()){ //spawns ghost when player touches the ground after first death
+			//gameLocal.Printf("Checked if ghost was alive");
 			SpawnGhost();
 			ghostAlive = true;
-		}
+		}*/
 		//yerrr end
 	}
 	BiasIntentDir( newIntentDir, prevBias );
@@ -9697,54 +9687,71 @@ void idPlayer::Think( void ) {
 	inBuyZonePrev = false;
 
 	//yerrr
-	/*if (powerupsAreActive){
-		if (!PowerUpActive(POWERUP_QUADDAMAGE) && !PowerUpActive(POWERUP_REGENERATION) && !PowerUpActive(POWERUP_HASTE)){
+	bloodCooldown--;
+	idVec3 floor;
+
+	if (bloodCooldown == 0){ //everytime bloodcooldown reaches 0, hurt the player
+		Damage(blood, blood, idVec3(0, 0, 0), "damage_blood", 1, 0);
+		bloodCooldown = 200;
+	}
+
+	/*if (gameLocal.time == (player->inventory.powerupEndTime[2])){
+		inventory.RegenActive = false;
+	}*/
+	/*if (inventory.RegenActive){
+		if (gameLocal.time == (player->inventory.powerupEndTime[2])){
+			gameLocal.Printf("no more regen\n");
 			powerUpSkin = NULL;
-			powerupsAreActive = false;
-			ClearPowerUps();
+			inventory.RegenActive = false;			
+			player->StopPowerUpEffect(2);
+			player->ClearPowerup(2);
+		}
+	}
+
+	if (inventory.HasteActive){
+		if (gameLocal.time == (inventory.powerupEndTime[2])){
+			gameLocal.Printf("no more haste\n");
+			powerUpSkin = NULL;
+			inventory.HasteActive = false;
+			player->StopPowerUpEffect(2);
+			player->ClearPowerup(2);
+		}
+	}
+
+	if (inventory.QuadActive){
+		if (gameLocal.time == (inventory.powerupEndTime[2])){
+			gameLocal.Printf("no more quad\n");
+			/*powerUpSkin = NULL;
+			inventory.QuadActive = false;
+			player->StopPowerUpEffect(2);
+			player->ClearPowerup(2);
 		}
 	}*/
 
-	//Clearing powerups
-	/*if (PowerUpActive(POWERUP_QUADDAMAGE)){
-		if (inventory.powerupEndTime)
-		StopPowerUpEffect(POWERUP_QUADDAMAGE);
-		ClearPowerup(POWERUP_QUADDAMAGE);
-		
-	}
-
-	if (PowerUpActive(POWERUP_REGENERATION)){
-		StopPowerUpEffect(POWERUP_REGENERATION);
-		ClearPowerup(POWERUP_REGENERATION);
-	}
-
-	if (PowerUpActive(POWERUP_HASTE)){
-		StopPowerUpEffect(POWERUP_HASTE);
-		ClearPowerup(POWERUP_HASTE);
-	}*/
-
 	//For Ghost
-	const idVec3 & playerOrigin = GetPhysics()->GetOrigin(); //get player's origin
-	ghostCooldown++;
-	ghostCooldown2++;
+	//const idVec3 & playerOrigin = GetPhysics()->GetOrigin(); //get player's origin
+	//ghostCooldown++;
+	//ghostCooldown2++;
 	//gameLocal.Printf("ghostCooldown %i", ghostCooldown);
 	
-	if (ghostCooldown == 250 && playerAlive){ //don't append to list after the player dies
-		ghostOrigin.Append(playerOrigin);
+	//saves player's origin
+	/*if (ghostCooldown == 250 && playerAlive){ //don't append to list after the player dies
+		//gameLocal.Printf("Origin %f,%f,%f\n", playerOrigin[0], playerOrigin[1], playerOrigin[2]);
+		playerOrigins.Append(playerOrigin);
 		ghostCooldown = 0; //reset cooldown
 	}
 
-	
+	//iterates ghost's position
 	if (ghostAlive && playerAlive){ //playerAlive is always true until Killed function is called
 
 		if (ghostCooldown2 == 250){
-			((idAI*)ghost)->SetOrigin(ghostOrigin.operator[](ghostIndex));
-			gameLocal.Printf("set origin from list 1");
+			((idAI*)ghost)->SetOrigin(ghostOrigins.operator[](ghostIndex));
+			//gameLocal.Printf("set origin from list 1");
 			
 			ghostIndex++;
 			ghostCooldown2 = 0;
 		}
-	}
+	}*/
 	
 	//gameLocal.Printf("Origin %f,%f,%f", masterOrigin[0], masterOrigin[1], masterOrigin[2]);
 	//yerrr end
@@ -9837,11 +9844,13 @@ void idPlayer::Killed( idEntity *inflictor, idEntity *attacker, int damage, cons
 	float delay;
 
 	//yerrr
-	playerAlive = false; //player is no longer alive
+	//playerAlive = false; //player is no longer alive
 
-	timeOfDeath = gameLocal.time; //int for comparing time of death in file
+	//timeOfDeath = gameLocal.time; //int for comparing time of death in file
 
-	deathCount++; //has to be after the if statement above
+	/*if (IsThisRunFarther()){
+		SaveGhost();
+	}*/
 	//yerrr end
 
 	assert( !gameLocal.isClient );
@@ -14195,7 +14204,7 @@ int idPlayer::CanSelectWeapon(const char* weaponName)
 	return weaponNum;
 }
 //yerrr
-void idPlayer::SpawnGhost(){
+/*void idPlayer::SpawnGhost(){
 	//char* test = "spawn Monster_StroggMarine";
 	//const idCmdArgs name(test, true);
 
@@ -14203,12 +14212,15 @@ void idPlayer::SpawnGhost(){
 	player = gameLocal.GetLocalPlayer();
 
 	idDict                test;
-	//float                 yaw = gameLocal.GetLocalPlayer()->viewAngles.yaw;
+	float                 yaw = gameLocal.GetLocalPlayer()->viewAngles.yaw;
 	test.Set("classname", "monster_strogg_marine");
-	//test.Set("angle", va("%f", yaw + 180));
+	test.Set("angle", va("%f", yaw + 180));
 
-	idVec3 org = ghostOrigin.operator[](0);
-
+	idVec3 org;
+	org[0] = 9702.0f;
+	org[1] = 7175.0f;
+	org[2] = -34.0f;
+	org += idAngles(0, 0, 0).ToForward() * 80 + idVec3(0, 0, 1);
 	//gameLocal.Printf("Origin %f,%f,%f", org[0], org[1], org[2]);
 
 	test.Set("origin", org.ToString());
@@ -14217,8 +14229,8 @@ void idPlayer::SpawnGhost(){
 
 	gameLocal.SpawnEntityDef(test, &ghost);
 
-	((idAI*)ghost)->team = gameLocal.GetLocalPlayer()->team;
-	//((idAI*)ghost)->SetLeader(gameLocal.GetLocalPlayer()); if i wanted them to follow me
+	//((idAI*)ghost)->team = gameLocal.GetLocalPlayer()->team;
+	//((idAI*)ghost)->SetLeader(gameLocal.GetLocalPlayer()); //if i wanted them to follow me
 	((idAI*)ghost)->aifl.undying = true;
 	((idAI*)ghost)->BecomeNonSolid();
 	((idAI*)ghost)->combat.fl.ignoreEnemies = true;
@@ -14237,8 +14249,8 @@ void idPlayer::SaveGhost(){
 	fprintf(pFile, "%i\n", timeOfDeath);
 
 	//next, we need to write each idVec3 in the ghostOrigin list
-	for (int x = 0; x < ghostOrigin.Num(); x++){
-		idVec3 temp = ghostOrigin[x];
+	for (int x = 0; x < playerOrigins.Num(); x++){
+		idVec3 temp = playerOrigins[x];
 		fprintf(pFile, "%f %f %f\n", temp[0], temp[1], temp[2]);
 	}
 
@@ -14258,13 +14270,18 @@ void idPlayer::ReadGhost(){
 		temp[0] = tempX;
 		temp[1] = tempY;
 		temp[2] = tempZ;
-		ghostOrigin.Append(temp);
+		//temp += idAngles(0, gameLocal.GetLocalPlayer()->viewAngles.yaw, 0).ToForward() * 80 + idVec3(0, 0, 1);
+		ghostOrigins.Append(temp);
 	}
 
 	fclose(pFile);
 }
 
 bool idPlayer::IsThisRunFarther(){
+	if (!DoesGhostFileExist()){
+		return true;
+	}
+
 	int TOD; //reading the time of death from a file
 	bool result;
 	FILE * pFile = fopen("ghostfile.txt", "r");
@@ -14272,10 +14289,12 @@ bool idPlayer::IsThisRunFarther(){
 	fscanf(pFile, "%i", &TOD); //finds the first int and saves it into TOD
 
 	//check if current time of death is greater than TOD in the file
-	if (timeOfDeath >= TOD)
+	if (timeOfDeath >= TOD){
 		result = true;
-	else
+	}
+	else{
 		result = false;
+	}
 
 	fclose(pFile);
 	return result;
@@ -14289,6 +14308,6 @@ bool idPlayer::DoesGhostFileExist(){
 	else{
 		return false;
 	}
-}
+}*/
 //yerrr end
 // RITUAL END

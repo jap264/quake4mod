@@ -1488,6 +1488,18 @@ entityDef damage_wound
 entityDef damage_blood
 {
 	"inherit"					"damage_bullet"
+	"damage"					"11"
+
+	"fx_wound"					"effects/wounds/energy.fx"
+
+	"deathPush"					"100"
+	"deathPushMin"				"2000 250"
+	"deathPushMax"				"5000 500"
+}
+
+entityDef damage_jump
+{
+	"inherit"					"damage_bullet"
 	"damage"					"5"
 
 	"fx_wound"					"effects/wounds/energy.fx"
