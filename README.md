@@ -2,9 +2,9 @@
 #Developed by Jansen Pimentel
 # 
 #IMPORTANT FILES:
-#	-player.def
+#	-player.def (in defs folder)
 #	-Quake4Config.cfg
-#	-english_guis.lang
+#	-english_guis.lang (in strings folder)
 #
 #EDITED FILES:
 #	-Player.cpp
